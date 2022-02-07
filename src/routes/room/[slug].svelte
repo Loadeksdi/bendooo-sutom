@@ -1,5 +1,5 @@
 <script context="module">
-    export async function load({ params, fetch, session, stuff }) {
+    export async function load({ params }) {
         const uid = params.slug;
         return {
             props : {
@@ -27,6 +27,14 @@
 
     let open = true;
     let nickname = "";
+    let playersNumber = 4;
+    let gridsNumber = 3;
+    let wordsLength = 6;
+
+    const startGame = () => {
+
+    }
+
     const joinRoom = async () => {
         if (nickname === ""){
             return;
@@ -44,7 +52,7 @@
 </script>
 
 <svelte:head>
-    <title>Le Bendooo - Waiting Room</title>
+    <title>Le Bendooo - Sutom - Salle d'attente</title>
 </svelte:head>
 
 <main>
@@ -71,18 +79,33 @@
             </Button>
         </Actions>
     </Dialog>
-    <section>
-        <Subheader>Players</Subheader>
-        <List class="list">
-            {#if roomData?.players}
-                {#each roomData?.players as player}
-                    <Item>
-                        <Text>{player}</Text>
-                    </Item>
-                {/each}
-            {/if}
-        </List>
-    </section>
+    <div class="container">
+        <section>
+            <Subheader>Joueurs {roomData?.players?.length ? roomData?.players?.length: 0}/{playersNumber}</Subheader>
+            <List class="list">
+                {#if roomData?.players}
+                    {#each roomData?.players as player}
+                        <Item>
+                            <Text>{player}</Text>
+                        </Item>
+                    {/each}
+                {/if}
+            </List>
+        </section>
+            <section>
+                <Subheader>Options de la partie</Subheader>
+                {#if roomData && roomData.players && roomData.players.length && nickname === roomData?.players[0]}
+                    <Textfield bind:value={playersNumber} label="Nombre de joueurs" type="number" min=2 max=10 />
+                    <Textfield bind:value={gridsNumber} label="Nombre de grilles" type="number" min=1 max=5 />
+                    <Textfield bind:value={wordsLength} label="Taille des mots" type="number" min=4 max="12"/>
+                    <Button on:click={startGame} disabled={playersNumber !== roomData?.players.length}>Démarrer la partie</Button>
+                {:else }
+                    <Text>Nombre de joueurs : {playersNumber}</Text>
+                    <Text>Nombre de grilles : {gridsNumber}</Text>
+                    <Text>Taille des mots : {wordsLength}</Text>
+                {/if}
+            </section>
+    </div>
 </main>
 
 
@@ -102,6 +125,20 @@
 
     section :global(.list) {
         border-left: 1px solid #E5D4ED;
+    }
+
+    .container {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-around;
+        align-content: flex-start;
+        align-items: flex-start;
+    }
+
+    section {
+        flex: 0 1 auto;
     }
 
 </style>
